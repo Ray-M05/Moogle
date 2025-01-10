@@ -32,12 +32,14 @@ class MoogleApp:
         resultados, sugerencias = self.engine.query(query)  # Desestructura el tuple en resultados y sugerencias
 
         # Limpia la lista de resultados previa
+        self.results_list.configure(state="normal")
         self.results_list.delete(1.0, tk.END)
 
         # Muestra los resultados
         if resultados:
+            self.results_list.insert(tk.END, "Resultados:\n")
             for doc, score in resultados:
-                self.results_list.insert(tk.END, f"Documento: {doc}\nScore: {score:.4f}\n\n")
+                self.results_list.insert(tk.END, f"- Documento: {doc}\n  Score: {score:.4f}\n\n")
         else:
             self.results_list.insert(tk.END, "No se encontraron resultados.\n")
 
@@ -45,5 +47,8 @@ class MoogleApp:
         if sugerencias:
             self.results_list.insert(tk.END, "\nSugerencias:\n")
             for palabra, sugerencia in sugerencias.items():
-                self.results_list.insert(tk.END, f"{palabra} -> {sugerencia}\n")
+                self.results_list.insert(tk.END, f"- {palabra} -> {sugerencia}\n")
+
+        # Deshabilitar edición nuevamente
+        self.results_list.configure(state="disabled")
 

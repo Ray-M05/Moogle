@@ -1,7 +1,6 @@
 import os
 import re
 import math
-import pdfplumber
 from collections import defaultdict
 
 class DocumentIndexer:
@@ -31,12 +30,10 @@ class DocumentIndexer:
 
     def cargar_documentos(self, ruta_carpeta):
         for archivo in os.listdir(ruta_carpeta):
-            if archivo.endswith(".pdf"):
-                ruta_pdf = os.path.join(ruta_carpeta, archivo)
-                with pdfplumber.open(ruta_pdf) as pdf:
-                    texto = ''
-                    for pagina in pdf.pages:
-                        texto += pagina.extract_text() or ''
+            if archivo.endswith(".txt"):  # Cambiar a archivos .txt
+                ruta_txt = os.path.join(ruta_carpeta, archivo)
+                with open(ruta_txt, 'r', encoding='utf-8') as file:  # Abrir con codificación UTF-8
+                    texto = file.read()
                     self.documentos[archivo] = texto
 
     def construir_indices(self):
