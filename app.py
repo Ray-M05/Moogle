@@ -29,17 +29,21 @@ class MoogleApp:
 
     def perform_search(self):
         query = self.query_entry.get()
-        result = self.engine.query(query)
+        resultados, sugerencias = self.engine.query(query)  # Desestructura el tuple en resultados y sugerencias
 
-        self.results_list.config(state="normal")
+        # Limpia la lista de resultados previa
         self.results_list.delete(1.0, tk.END)
 
-        for item in result.items:
-            self.results_list.insert(tk.END, f"Title: {item.title}\n")
-            self.results_list.insert(tk.END, f"Snippet: {item.snippet}\n")
-            self.results_list.insert(tk.END, f"Score: {item.score}\n\n")
+        # Muestra los resultados
+        if resultados:
+            for doc, score in resultados:
+                self.results_list.insert(tk.END, f"Documento: {doc}\nScore: {score:.4f}\n\n")
+        else:
+            self.results_list.insert(tk.END, "No se encontraron resultados.\n")
 
-        if result.suggestion:
-            self.results_list.insert(tk.END, f"Suggestion: {result.suggestion}\n")
+        # Muestra sugerencias
+        if sugerencias:
+            self.results_list.insert(tk.END, "\nSugerencias:\n")
+            for palabra, sugerencia in sugerencias.items():
+                self.results_list.insert(tk.END, f"{palabra} -> {sugerencia}\n")
 
-        self.results_list.config(state="disabled")
