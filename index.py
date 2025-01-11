@@ -5,14 +5,25 @@ from collections import defaultdict
 
 class DocumentIndexer:
     def __init__(self):
-        self.Larousse = defaultdict(dict)  # Índice invertido
-        self.TF_IDF = defaultdict(dict)   # TF-IDF por palabra
-        self.documentos = {}              # Documentos y su texto
-        self.threshold = None             # Umbral dinámico para exclusión de palabras comunes
+        self.Larousse = defaultdict(dict)
+        self.TF_IDF = defaultdict(dict)
+        self.documentos = {}
+        self.threshold = None
+        self.stop_words = set()  # Palabras no deseadas
+
+    def cargar_stop_words(self, ruta_archivo):
+        """Carga las palabras no deseadas desde un archivo."""
+        try:
+            with open(ruta_archivo, 'r', encoding='utf-8') as file:
+                self.stop_words = set(file.read().splitlines())
+        except Exception as e:
+            print(f"Error cargando las stop words: {e}")
 
     def limpiar_texto(self, texto):
+        """Elimina puntuaciones, pasa a minúsculas y excluye palabras no deseadas."""
         texto = re.sub(r'[\W_]+', ' ', texto.lower())  # Eliminar puntuación y pasar a minúsculas
-        return texto.split()  # Separar por palabras
+        palabras = texto.split()
+        return [palabra for palabra in palabras if palabra not in self.stop_words]  # Excluir palabras no deseadas
 
     def calcular_umbral(self):
         """Calcula el umbral dinámico basado en la frecuencia de las palabras en todo el corpus."""

@@ -28,8 +28,8 @@ class MoogleApp:
         self.results_list.pack(fill="both", expand=True)
 
     def perform_search(self):
-        query = self.query_entry.get()
-        resultados, sugerencias = self.engine.query(query)  # Desestructura el tuple en resultados y sugerencias
+        query = self.query_entry.get()  # Obtener la consulta
+        resultados, sugerencias = self.engine.query(query)  # Realizar la búsqueda
 
         # Limpia la lista de resultados previa
         self.results_list.configure(state="normal")
@@ -37,18 +37,20 @@ class MoogleApp:
 
         # Muestra los resultados
         if resultados:
-            self.results_list.insert(tk.END, "Resultados:\n")
-            for doc, score in resultados:
-                self.results_list.insert(tk.END, f"- Documento: {doc}\n  Score: {score:.4f}\n\n")
+            self.results_list.insert(tk.END, "Resultados:\n\n")
+            for doc, score, snippet in resultados:
+                titulo = doc.split("/")[-1]  # Obtiene solo el nombre del archivo
+                self.results_list.insert(
+                    tk.END, f"Título: {titulo}\nScore: {score:.4f}\nSnippet: {snippet}\n\n"
+                )
         else:
             self.results_list.insert(tk.END, "No se encontraron resultados.\n")
 
-        # Muestra sugerencias
+        # Muestra sugerencias si existen
         if sugerencias:
             self.results_list.insert(tk.END, "\nSugerencias:\n")
             for palabra, sugerencia in sugerencias.items():
-                self.results_list.insert(tk.END, f"- {palabra} -> {sugerencia}\n")
+                self.results_list.insert(tk.END, f"{palabra} -> {sugerencia}\n")
 
-        # Deshabilitar edición nuevamente
+        # Desactiva el widget para evitar edición
         self.results_list.configure(state="disabled")
-
